@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+
+  master:
+    build:
+       context: ./master
+       dockerfile: Dockerfile
+    ports:
+      - "9090:9090"
+
+  secondary.1:
+    build:
+       context: ./secondary
+       dockerfile: Dockerfile
+    ports:
+      - "9001:9000"
+
+  secondary.2:
+    build:
+       context: ./secondary
+       dockerfile: Dockerfile
+    ports:
+      - "9002:9000"
+
+  secondary.delay:
+    build:
+      context: ./secondary
+      dockerfile: Dockerfile
+      args:
+        delay: 5
+    ports:
+      - "9003:9000"
