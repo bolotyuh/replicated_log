@@ -8,11 +8,11 @@ $ docker-compose up build -d
 ## Available methods
 
 ### Master
-[POST] Append message
-[GET] List messages
+* [POST] Append message
+* [GET] List messages
 
 ### Secondary
-[GET] List messages
+* [GET] List messages
 
 
 ## Example of usage api
