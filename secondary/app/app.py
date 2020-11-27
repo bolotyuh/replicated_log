@@ -6,11 +6,12 @@ from functools import partial
 from .handlers import MainHandler
 
 logger = logging.getLogger(__name__)
+LOGGER_FORMAT = '%(asctime)s %(message)s'
 
 
 def main(args: Any = None) -> None:
     handler = MainHandler()
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.DEBUG, format=LOGGER_FORMAT, datefmt='[%H:%M:%S]')
 
     app = web.Application(logger=logger)
     app.router.add_get("/list-msg", handler.list_messages, name="list_messages")

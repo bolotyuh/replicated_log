@@ -9,12 +9,21 @@ from .broadcaster import Broadcaster
 
 PROJ_ROOT = pathlib.Path(__file__).parent.parent
 logger = logging.getLogger(__name__)
+LOGGER_FORMAT = '%(asctime)s %(message)s'
+ENV = os.getenv('ENV', 'debug').lower()
 
 
 def main() -> None:
-    conf = load_config(os.path.join(PROJ_ROOT, 'config.yml'))
+    logging.basicConfig(level=logging.DEBUG, format=LOGGER_FORMAT, datefmt='[%H:%M:%S]')
 
-    logging.basicConfig(level=logging.DEBUG)
+    config_filename = 'config.yml' if ENV == 'debug' else f"config.yml.{ENV}"
+
+    if not os.path.isfile(os.path.join(PROJ_ROOT, config_filename)):
+        raise RuntimeError("Config file doesn't exist")
+
+    conf = load_config(os.path.join(PROJ_ROOT, config_filename))
+    logger.info(f"Running on {ENV} environment")
+
     broadcaster = Broadcaster(conf)
     handler = MainHandler(broadcaster)
 

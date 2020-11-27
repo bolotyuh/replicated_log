@@ -22,9 +22,12 @@ class MainHandler:
         logger.info(f'Receive a message on node {data}')
 
         if type(delay) == int:
-            logger.debug(f'User delay: {delay}')
+            logger.debug(f'Delay used: {delay}')
             await asyncio.sleep(delay)
 
         self.msg_storage.append(Message(**data))
+
+        logger.info(f'Append a message on node {data}')
+
         await ws.send_json({'ack': 'OK'})
         await ws.close()
