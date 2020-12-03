@@ -1,12 +1,14 @@
-from aiohttp import web
 import asyncio
 import logging
 import json
 
+from aiohttp import web
+from pydantic import ValidationError
+
 from .msg_storage import MsgStorage
 from .models import Message, AppendMessage
 from .broadcaster import Broadcaster
-from pydantic import ValidationError
+from .exceptions import WriteConcertError
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +34,9 @@ class MainHandler:
 
         logger.debug(f"Append message: {{{msg}}} on [MASTER]")
 
-        await self.broadcaster.broadcast_all_secondaries(msg, data.w)
+        try:
+            await self.broadcaster.broadcast_all_secondaries(msg, data.w)
+        except WriteConcertError:
+            return web.json_response({'status': 'error', 'msg': 'Write concern error'})
 
-        return web.json_response({'status': 'OK'})
+        return web.json_response({'status': 'OK'}, status=400)

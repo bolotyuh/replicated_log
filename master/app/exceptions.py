@@ -1,0 +1,2 @@
+class WriteConcertError(Exception):
+    pass
