@@ -40,10 +40,12 @@ class NodeSecondary:
 
     async def process(self):
         while not self.message_queue.empty():
-            qmsg = self.message_queue.get_nowait()
-
             try:
-                await self._send_msg(qmsg)
+                if self.status == HeartbeatService.STATUS_HEALTHY:
+                    qmsg = self.message_queue.get_nowait()
+                    await self._send_msg(qmsg)
+                else:
+                    await asyncio.sleep(1)
             except ClientConnectorError:
                 self.retry_attempts += 1
 
@@ -55,5 +57,6 @@ class NodeSecondary:
                     f'<red>Retry send message `{qmsg.id}` on node [{self.name}], attempts [{self.retry_attempts}], delay [{self.retry_delay:.4}]</red>')
                 self.message_queue.put_nowait(qmsg)
             else:
-                logger.opt(colors=True).info(f'<green>Successful sent message `{qmsg.id}` on node [{self.name}]</green>')
+                logger.opt(colors=True).info(
+                    f'<green>Successful sent message on node [{self.name}]</green>')
                 self.retry_attempts = 0
