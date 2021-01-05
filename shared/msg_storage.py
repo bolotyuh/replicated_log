@@ -38,7 +38,10 @@ class MsgList:
             else:
                 result.append(order_index[i])
 
-        return result
+        if None in result:
+            return result[0:result.index(None)]
+        else:
+            return result
 
     def get_all(self) -> List[Message]:
         return self.__data

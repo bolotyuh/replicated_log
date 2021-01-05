@@ -51,9 +51,9 @@ class NodeSecondary:
                     self.retry_delay += 2
 
                 await asyncio.sleep(self.retry_delay)
-                logger.error(
-                    f'Retry send message `{qmsg.id}` on node [{self.name}], attempts [{self.retry_attempts}], delay [{self.retry_delay:.4}]')
+                logger.opt(colors=True).info(
+                    f'<red>Retry send message `{qmsg.id}` on node [{self.name}], attempts [{self.retry_attempts}], delay [{self.retry_delay:.4}]</red>')
                 self.message_queue.put_nowait(qmsg)
             else:
-                logger.info(f'Successful sent message `{qmsg.id}` on node [{self.name}]')
+                logger.opt(colors=True).info(f'<green>Successful sent message `{qmsg.id}` on node [{self.name}]</green>')
                 self.retry_attempts = 0

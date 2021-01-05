@@ -9,4 +9,4 @@ secondaries:
       name: 'secondary 2'
     -
       url: 'ws://127.0.0.1:9003'
-      name: 'secondary delay'
+      name: 'secondary 3'

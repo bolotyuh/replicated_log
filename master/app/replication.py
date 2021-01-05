@@ -27,7 +27,7 @@ class Replication:
         return len([1 for node in self.nodes if node.status == HeartbeatService.STATUS_HEALTHY])
 
     def calc_quorum(self):
-        return len(self.nodes) // 2 + 1
+        return len(self.nodes) // 2 + 2
 
     def check_quorum(self):
         live_node_count = self.get_count_of_live_nodes() + 1
