@@ -1,13 +1,12 @@
 import trafaret as t
 import yaml
 
-
 CONFIG_TRAFARET = t.Dict(
     {
         t.Key('secondaries'): t.List(t.Dict({
-                'url': t.String(),
-                'name': t.String(),
-            })
+            'url': t.String(),
+            'name': t.String(),
+        })
         ),
         'host': t.IP,
         'port': t.Int(),

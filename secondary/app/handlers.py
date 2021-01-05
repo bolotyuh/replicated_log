@@ -1,33 +1,39 @@
 import asyncio
 from aiohttp import web
-import logging
+from loguru import logger
+import random
 
-from .msg_storage import MsgStorage
-from .models import Message
-
-logger = logging.getLogger(__name__)
+from shared.msg_storage import MsgList
+from shared.models import Message
 
 
 class MainHandler:
-    def __init__(self):
-        self.msg_storage = MsgStorage()
+    def __init__(self, delay: int, error_prob: float):
+        self.msg_storage = MsgList()
+        self.delay = delay
+        self.error_prob = error_prob
+
+    async def health(self, request):
+        return web.json_response({"status": "healthy"})
 
     async def list_messages(self, request):
-        return web.json_response([msg.dict() for msg in self.msg_storage.get_all()])
+        return web.json_response(self.msg_storage.get_ordered_json())
 
-    async def ws_append_message(self, request: web.Request, delay=0) -> None:
-        ws = web.WebSocketResponse()
-        await ws.prepare(request)
-        data = await ws.receive_json()
-        logger.info(f'Receive a message on node {data}')
+    async def append_message(self, request: web.Request) -> web.Response:
+        if random.random() < self.error_prob:
+            logger.opt(colors=True).info("<bold><red>Emulate Internal server error</red></bold>")
+            return web.json_response({"status": "internal server error"}, status=500)
 
-        if type(delay) == int:
-            logger.debug(f'Delay used: {delay}')
+        # emulate delay
+        if int(self.delay) > 0:
+            delay = random.random() * 10
+            logger.opt(colors=True).info(f"<bold><red>Emulate delay: {delay:.4}</red></bold>")
             await asyncio.sleep(delay)
+
+        data = await request.json()
+        logger.opt(colors=True).info(f'<yellow>Receive a message on node {data}</yellow>')
 
         self.msg_storage.append(Message(**data))
 
-        logger.info(f'Append a message on node {data}')
-
-        await ws.send_json({'ack': 'OK'})
-        await ws.close()
+        logger.opt(colors=True).info(f'<yellow>Append a message on node {data}</yellow>')
+        return web.json_response({'ack': 'OK'})

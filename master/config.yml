@@ -2,11 +2,11 @@ host: 0.0.0.0
 port: 9090
 secondaries:
     -
-      url: 'ws://127.0.0.1:9001/ws-append-msg'
+      url: 'ws://127.0.0.1:9001'
       name: 'secondary 1'
     -
-      url: 'ws://127.0.0.1:9002/ws-append-msg'
+      url: 'ws://127.0.0.1:9002'
       name: 'secondary 2'
     -
-      url: 'ws://127.0.0.1:9003/ws-append-msg'
+      url: 'ws://127.0.0.1:9003'
       name: 'secondary delay'
